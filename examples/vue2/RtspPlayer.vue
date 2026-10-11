@@ -37,7 +37,7 @@ export default {
       if (!this.rtspUrl) return
       try {
         if (typeof RTCPeerConnection === 'undefined') {
-          throw new Error('宿主 WebView 不支持 WebRTC')
+          throw new Error('当前 WebView 不支持 WebRTC')
         }
         const response = await fetch(this.serviceUrl + '/health')
         if (!response.ok) throw new Error('本地视频服务未就绪')

@@ -103,7 +103,7 @@ void serve(int port, std::promise<std::string> ready) {
 }  // namespace
 
 extern "C" int wrs_start(int port) {
-  stage("01 wrs_start entered: android-rtsp-bridge/0.4-api28");
+  stage("01 wrs_start entered: android-rtsp-bridge/1.0-api28");
   std::lock_guard<std::mutex> lock(lifecycle_mutex);
   last_error.clear();
   if (port < 1024 || port > 65535) {
@@ -152,5 +152,5 @@ extern "C" void wrs_stop() {
 extern "C" int wrs_is_running() { return running.load() ? 1 : 0; }
 extern "C" const char* wrs_last_error() { return last_error.c_str(); }
 extern "C" const char* wrs_version() {
-  return "android-rtsp-bridge/0.4-api28 upstream/741ce34 webrtc/848836f";
+  return "android-rtsp-bridge/1.0-api28 upstream/741ce34 webrtc/848836f";
 }

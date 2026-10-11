@@ -39,7 +39,7 @@ shared_library("webrtc_streamer") {
     "HAVE_LIVE555", "WRS_RTSP_ONLY", "NO_SSL", "NO_CGI", "NO_OPENSSL=1",
     "BSD=1", "SOCKLEN_T=socklen_t",
     "_FILE_OFFSET_BITS=64", "_LARGEFILE_SOURCE=1",
-    "VERSION=\"android-rtsp-bridge/0.4-api28 upstream/741ce34\"",
+    "VERSION=\"android-rtsp-bridge/1.0-api28 upstream/741ce34\"",
     "BUILD_DATE=\"pinned-source-build\"",
   ]
   cflags = [ "-Wno-error", "-Wno-deprecated-declarations" ]

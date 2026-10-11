@@ -1,6 +1,6 @@
 package com.example.rtsp;
 
-/** Call start/stop from a background executor owned by the host plugin. */
+/** Call start/stop from an application background executor. */
 public final class WebRtcStreamer {
     static { System.loadLibrary("webrtc_streamer"); }
     private WebRtcStreamer() {}

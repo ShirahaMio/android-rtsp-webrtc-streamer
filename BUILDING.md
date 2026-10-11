@@ -1,4 +1,4 @@
-# 构建 v0.4
+# 构建 v1.0
 
 使用 Linux x86_64（例如 Ubuntu24.04 / WSL2），Python3.12+、Git、CMake、Ninja、Clang
 及 WebRTC 构建依赖。建议可用磁盘至少 60GB，内存 16GB 以上。Android 依赖下载需要网络。
@@ -31,4 +31,4 @@ python3 tests/smoke_runtime.py "$WRS_BUILD_ROOT/webrtc/src/out/linux-smoke/libwe
 
 媒体测试另需 ffmpeg、Python aiortc/aiohttp/av，以及将 MediaMTX 放入
 $WRS_BUILD_ROOT/media-test/mediamtx；测试源码 tests/media_roundtrip.py 使用本地合成流。
-这些 Linux 测试不能代替 Android 宿主实际运行验证。
+这些 Linux 测试不能代替 Android 设备实际运行验证。

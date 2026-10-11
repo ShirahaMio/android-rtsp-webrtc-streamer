@@ -1,6 +1,6 @@
-# v0.4 — Android9+ ARM64 RTSP → WebRTC
+# v1.0 — Android9+ ARM64 RTSP → WebRTC
 
-首次公开发布。基于 mpromonet/webrtc-streamer 的非官方 Android 嵌入式移植。
+Android RTSP → WebRTC 动态库，基于 mpromonet/webrtc-streamer 移植。
 
 - Android API28+ / arm64-v8a，C API、JNI 和 Vue2 示例。
 - 进程内 localhost 服务，无需另起外部 RTSP→WebRTC 转换服务器。
@@ -10,4 +10,4 @@
 - H.265 依赖 WebView 协商支持，无转码；不承诺所有设备或长期运行均已验证。
 
 下载 Assets 中的二进制 ZIP，集成说明见 README。
-libwebrtc_streamer.so SHA256：`72ada665fd096f1f9e8546739dff561e07784684a18481880bbe72595bc674af`
+libwebrtc_streamer.so SHA256：`d5c70120445775f7916bc0ca6bfa80e7c19ec5524985400f6366a9226bf630ca`
