@@ -1,0 +1,38 @@
+{
+  "upstream": {
+    "repository": "mpromonet/webrtc-streamer",
+    "revision": "741ce34d28445ca3761296e80170e74270d2d2b6",
+    "url": "https://codeload.github.com/mpromonet/webrtc-streamer/tar.gz/741ce34d28445ca3761296e80170e74270d2d2b6",
+    "sha256": "3ae3a6be9244d0d61f0c3fd10496fb07475573c47077f6618bd9d67eeacf387f"
+  },
+  "upstream/civetweb": {
+    "repository": "civetweb/civetweb",
+    "revision": "d7ba35bbb649209c66e582d5a0244ba988a15159",
+    "url": "https://codeload.github.com/civetweb/civetweb/tar.gz/d7ba35bbb649209c66e582d5a0244ba988a15159",
+    "sha256": "d21a21f793fbe86f57dc15c788407b332582b6d4e5a22382143641f9dce77b35"
+  },
+  "upstream/cxxopts": {
+    "repository": "jarro2783/cxxopts",
+    "revision": "929bf2de375dba6f3a24a3a8fe681389b2b58a5b",
+    "url": "https://codeload.github.com/jarro2783/cxxopts/tar.gz/929bf2de375dba6f3a24a3a8fe681389b2b58a5b",
+    "sha256": "6667e61f6fccfba570d9eb523ea3e2a78297681ee2cec8ddc3a81e54101a70c5"
+  },
+  "upstream/html": {
+    "repository": "mpromonet/webrtc-streamer-html",
+    "revision": "fdef439b585d445f899d0df3002562c42847d30d",
+    "url": "https://codeload.github.com/mpromonet/webrtc-streamer-html/tar.gz/fdef439b585d445f899d0df3002562c42847d30d",
+    "sha256": "f2d638c9faa943d1d540d59dfde4c105fcc905ae8194621e7b8e28bd228f4bdf"
+  },
+  "upstream/live555helper": {
+    "repository": "mpromonet/live555helper",
+    "revision": "121e0186153e647388bedd39964129c985b85019",
+    "url": "https://codeload.github.com/mpromonet/live555helper/tar.gz/121e0186153e647388bedd39964129c985b85019",
+    "sha256": "7d2c04f56e742ae2b428ffd909c892bcf152fa9b57fc32db6cc1c515a85fdd88"
+  },
+  "upstream/prometheus-cpp": {
+    "repository": "jupp0r/prometheus-cpp",
+    "revision": "c9ffcdda9086ffd9e1283ea7a0276d831f3c8a8d",
+    "url": "https://codeload.github.com/jupp0r/prometheus-cpp/tar.gz/c9ffcdda9086ffd9e1283ea7a0276d831f3c8a8d",
+    "sha256": "71bfb49c94da173bb1ef8e89af707a144e98d0fa97d764a74af4a9f532f17978"
+  }
+}

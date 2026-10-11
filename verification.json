@@ -1,0 +1,13 @@
+{
+  "version": "0.4-api28",
+  "abi": "arm64-v8a",
+  "minimum_api": 28,
+  "sha256": "72ada665fd096f1f9e8546739dff561e07784684a18481880bbe72595bc674af",
+  "user_report": {
+    "date": "2026-10-11",
+    "service_started": true,
+    "video_played": true,
+    "device_details": "not specified"
+  },
+  "host_regression": "lifecycle and H264 roundtrip passed"
+}

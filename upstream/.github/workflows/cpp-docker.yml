@@ -1,0 +1,115 @@
+name: C/C++ CI docker
+
+on: [push]
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+        - os: windows-2022
+          dockerfile: Dockerfile.windows
+          arch: windows
+
+        - os: ubuntu-latest
+          dockerfile: Dockerfile.arm64
+          arch: arm64
+          image: arm64v8/ubuntu
+
+        - os: ubuntu-latest
+          dockerfile: Dockerfile.rpi
+          arch: armv7l
+          crosscompiler: https://downloads.sourceforge.net/project/raspberry-pi-cross-compilers/Raspberry%20Pi%20GCC%20Cross-Compiler%20Toolchains/Bookworm/GCC%2014.2.0/Raspberry%20Pi%202%2C%203/cross-gcc-14.2.0-pi_2-3.tar.gz
+          image: balenalib/raspberry-pi2
+
+        - os: ubuntu-latest
+          dockerfile: Dockerfile
+          arch: amd64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Remove unnecessary directories to free up space
+      if: runner.os != 'Windows'
+      run: |
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+        sudo rm -rf /usr/local/lib/android/sdk
+        sudo rm -rf /usr/share/dotnet
+
+    - name: Free Disk Space
+      if: runner.os == 'Windows'
+      run: |
+        Write-Host "Disk before cleanup:"
+        Get-PSDrive -PSProvider FileSystem
+
+        $path = 'C:\Android'
+        if (Test-Path $path) {
+          $sizeBytes = (Get-ChildItem -LiteralPath $path -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum
+          $sizeGB = if ($sizeBytes) { $sizeBytes/1GB } else { 0 }
+          Write-Host "Path: $path"
+          Write-Host ("Size: {0:N2} GB ({1:N0} bytes) / {2:N2} MB" -f $sizeGB, $sizeBytes, ($sizeBytes/1MB))
+        } else {
+          Write-Host "Path not found: $path"
+        }
+
+        $path = 'C:\Users'
+        if (Test-Path $path) {
+          $sizeBytes = (Get-ChildItem -LiteralPath $path -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum
+          $sizeGB = if ($sizeBytes) { $sizeBytes/1GB } else { 0 }
+          Write-Host "Path: $path"
+          Write-Host ("Size: {0:N2} GB ({1:N0} bytes) / {2:N2} MB" -f $sizeGB, $sizeBytes, ($sizeBytes/1MB))
+        } else {
+          Write-Host "Path not found: $path"
+        }
+
+        Write-Host "Removing C:\Android..."
+        Remove-Item -Path 'C:\Android' -Recurse -Force -ErrorAction SilentlyContinue
+
+        Write-Host "Disk after cleanup:"
+        Get-PSDrive -PSProvider FileSystem
+
+    - uses: actions/checkout@v7
+    - run: git fetch --prune --unshallow --tags
+
+    - name: Build an image from Dockerfile
+      run: |
+        docker info
+        docker build -t docker.io/${{ github.repository }}:${{ github.base_ref || github.ref_name }}-${{ matrix.arch }} -f ${{ matrix.dockerfile }} --build-arg CROSSCOMPILER=${{ matrix.crosscompiler }} --build-arg ARCH=${{ matrix.arch }} --build-arg IMAGE=${{ matrix.image }} .
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Push to Container Registry
+      run: |
+        docker push docker.io/${{ github.repository }}:${{ github.base_ref || github.ref_name }}-${{ matrix.arch }} 
+
+  multiarch:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Publish multiarch image
+      env:
+        DOCKER_CLI_EXPERIMENTAL: enabled
+      run: |
+        docker info
+        export TAG=${{ github.base_ref || github.ref_name }}
+        export MANIFEST=${TAG}
+        [ "$TAG" == "master" ] && export MANIFEST=latest
+        docker manifest create --amend docker.io/${{ github.repository }}:${MANIFEST} docker.io/${{ github.repository }}:${TAG}-amd64 docker.io/${{ github.repository }}:${TAG}-armv7l docker.io/${{ github.repository }}:${TAG}-windows docker.io/${{ github.repository }}:${TAG}-arm64
+        docker manifest annotate docker.io/${{ github.repository }}:${MANIFEST} docker.io/${{ github.repository }}:${TAG}-armv7l --os linux --arch arm --variant v7
+        docker manifest push docker.io/${{ github.repository }}:${MANIFEST} -p

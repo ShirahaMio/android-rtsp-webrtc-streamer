@@ -1,0 +1,9 @@
+* text=auto
+*.sh text eol=lf
+*.py text eol=lf
+*.gn text eol=lf
+*.gni text eol=lf
+*.in text eol=lf
+*.tar.gz binary
+*.png binary
+*.jpg binary

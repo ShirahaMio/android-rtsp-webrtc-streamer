@@ -1,0 +1,73 @@
+import("//webrtc.gni")
+
+shared_library("webrtc_streamer") {
+  check_includes = false
+  sources = [
+@SOURCES@
+    "//rtc_base/strings/json.cc",
+    "//third_party/jsoncpp/source/src/lib_json/json_reader.cpp",
+    "//third_party/jsoncpp/source/src/lib_json/json_value.cpp",
+    "//third_party/jsoncpp/source/src/lib_json/json_writer.cpp",
+  ]
+  if (is_android) {
+    sources += [
+      "android_src/jni_bridge.cpp",
+      # The prebuilt compiler-rt CPU initializer contains PAC instructions.
+      # Supply the same source under our baseline ARM64 flags so that archive
+      # member is not selected by the linker (older Houdini compatibility).
+      "//third_party/compiler-rt/src/lib/builtins/cpu_model/aarch64.c",
+    ]
+  }
+  configs -= [
+    "//build/config/compiler:no_exceptions",
+    "//build/config/compiler:chromium_code",
+    "//build/config/clang:find_bad_constructs",
+    "//build/config/clang:unsafe_buffers",
+  ]
+  configs += [
+    "//build/config/compiler:exceptions", "//:common_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
+  include_dirs = [
+    "include", "inc", "civetweb/include", "live555helper/inc",
+    "live/groupsock/include", "live/liveMedia/include",
+    "live/UsageEnvironment/include", "live/BasicUsageEnvironment/include",
+    "//", "//third_party/abseil-cpp", "//third_party/libyuv/include",
+    "//third_party/jsoncpp/source/include", "//third_party/jsoncpp/generated",
+  ]
+  defines = [
+    "HAVE_LIVE555", "WRS_RTSP_ONLY", "NO_SSL", "NO_CGI", "NO_OPENSSL=1",
+    "BSD=1", "SOCKLEN_T=socklen_t",
+    "_FILE_OFFSET_BITS=64", "_LARGEFILE_SOURCE=1",
+    "VERSION=\"android-rtsp-bridge/0.4-api28 upstream/741ce34\"",
+    "BUILD_DATE=\"pinned-source-build\"",
+  ]
+  cflags = [ "-Wno-error", "-Wno-deprecated-declarations" ]
+  ldflags = [
+    "-Wl,--version-script=" + rebase_path("exports.map", root_build_dir),
+    "-Wl,-z,max-page-size=16384",
+    "-Wl,--pack-dyn-relocs=none",
+  ]
+  inputs = [ "exports.map" ]
+  libs = [ "dl" ]
+  if (is_android) {
+    libs += [ "log", "android" ]
+  }
+  deps = [
+    "//api:create_peerconnection_factory",
+    "//api:enable_media",
+    "//api:field_trials",
+    "//api/audio_codecs:builtin_audio_decoder_factory",
+    "//api/audio_codecs:builtin_audio_encoder_factory",
+    "//api/video_codecs:builtin_video_decoder_factory",
+    "//api/video_codecs:builtin_video_encoder_factory",
+    "//common_video",
+    "//modules/video_coding:webrtc_h264",
+    "//modules/video_coding:h264_sprop_parameter_sets",
+    "//pc:video_track_source",
+    "//rtc_base:stringutils",
+    "//rtc_base:ssl_adapter",
+    "//rtc_base:threading",
+    "//third_party/libyuv",
+  ]
+}

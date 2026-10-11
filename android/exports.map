@@ -1,0 +1,6 @@
+{
+  global:
+    wrs_*;
+    Java_com_example_rtsp_WebRtcStreamer_*;
+  local: *;
+};

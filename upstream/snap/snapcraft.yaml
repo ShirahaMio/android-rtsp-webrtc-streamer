@@ -1,0 +1,77 @@
+  name: webrtc-streamer
+  adopt-info: webrtc-streamer
+  summary: webrtc streamer
+  description: |
+     WebRTC-streamer is an experiment to stream video capture devices and RTSP sources through WebRTC using simple mechanism.
+
+     It embeds a HTTP server that implements API and serves a simple HTML page that use them through AJAX.
+
+     The WebRTC signaling is implemented through HTTP requests:
+     * /api/call : send offer and get answer
+     * /api/hangup : close a call
+     * /api/addIceCandidate : add a candidate
+     * /api/getIceCandidate : get the list of candidates
+
+  grade: stable 
+  confinement: strict
+  base: core26
+  platforms:
+    amd64:
+    
+  parts:
+    webrtc:
+      plugin: nil
+      source: https://chromium.googlesource.com/chromium/tools/depot_tools.git
+      source-type: git
+      override-build: |
+        mkdir -p /webrtc
+        cd /webrtc
+        ensure_bootstrap
+        git config --global http.postBuffer 1048576000
+        git config --global http.lowSpeedLimit 0
+        git config --global http.lowSpeedTime 999999
+        git config --global http.version HTTP/1.1
+        fetch --nohooks --nohistory webrtc
+      build-environment:
+      - PATH: $SNAPCRAFT_PART_SRC:$PATH        
+      build-packages:
+      - curl
+      - python3
+
+    webrtc-streamer:
+      after: [webrtc]
+      plugin: cmake
+      source: .
+      source-type: git
+      cmake-parameters:
+      - -DWEBRTCROOT=/webrtc
+      build-environment:
+      - PATH: $SNAPCRAFT_PART_SRC/../../webrtc/src:$PATH
+      override-pull: |
+        craftctl default
+        craftctl set version="$(git describe --tags --always)"      
+      build-packages:
+      - g++
+      - make
+      - pkg-config
+      - python3 
+      - python3-pkg-resources
+      - libgtk-3-dev
+      - libasound2-dev
+      - libpulse-dev
+      - libssl-dev
+      - librtmp-dev
+      stage-packages:
+      - libgtk-3-0
+      - libxt6
+      - libxtst6
+      - libasound2
+      - libpulse0
+      - libssl-dev
+      - librtmp1
+
+  apps:
+    webrtc-streamer:
+      command: usr/local/bin/webrtc-streamer -C $SNAP/usr/local/share/webrtc-streamer/config.json -w $SNAP/usr/local/share/webrtc-streamer/html
+      daemon: simple   
+      plugs: [network-bind]

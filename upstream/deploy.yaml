@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: webrtc-streamer
+  name: webrtc-streamer
+spec:
+  selector:
+    matchLabels:
+      app: webrtc-streamer
+  template:
+    metadata:
+      labels:
+        app: webrtc-streamer
+    spec:
+      hostNetwork: true
+      containers:
+      - image: mpromonet/webrtc-streamer
+        args: ["-o","-C","config.json"]
+        name: webrtc-streamer
+        ports:
+        - name: web
+          containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webrtc-streamer
+  annotations:
+    traefik.ingress.kubernetes.io/affinity: "true"
+spec:
+  selector:
+    app: webrtc-streamer
+  ports:
+    - name: web
+      port: 8000
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: webrtc-streamer
+  name: webrtc-streamer
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            backend:
+              serviceName: webrtc-streamer
+              servicePort: 8000

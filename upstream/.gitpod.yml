@@ -1,0 +1,27 @@
+image: gitpod/workspace-full
+checkoutLocation: webrtc-streamer
+tasks: 
+  - name: build
+    init: |
+      pushd ..
+      git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+      popd
+      export PATH=$PATH:`realpath ../depot_tools`
+
+      mkdir ../webrtc
+      pushd ../webrtc
+      fetch webrtc 
+      popd
+
+      cmake -DCMAKE_BUILD_TYPE=Debug .
+      make
+
+    command: |
+      ./webrtc-streamer -C config.json
+
+ports:
+  - port: 8000
+    onOpen: open-browser
+vscode:
+  extensions:
+    - webfreak.debug

@@ -1,0 +1,10 @@
+/dist/
+/logs/
+/symbols/
+/build/
+/release/
+__pycache__/
+*.pyc
+*.key
+*.crt
+.env
